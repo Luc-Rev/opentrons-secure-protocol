@@ -48,24 +48,6 @@ def _require_auth(protocol: protocol_api.ProtocolContext):
         return
     raise RuntimeError("Authentication required: set OT_AUTH/OT_USER (simulate) or provide signed token file.")
 
-# --------- Liquid-class ----------
-class LC:
-    # P1000 – aqueux modérés (plasma/ACB)
-    P1K_ASP_AQ = 200; P1K_DISP_AQ = 300
-    # P1000 – élution/surnageants
-    P1K_ASP_ELU = 180; P1K_DISP_ELU = 280
-    P1K_ASP_SUP = 200; P1K_DISP_SUP = 400
-    # P50 – beads/enzymes
-    P50_ASP_VIS = 15;  P50_DISP_VIS = 30
-    # Air-gaps
-    AG_AQ = 2; AG_SUP = 5; AG_VIS = 2
-    # Hauteurs (mm)
-    ASP_NEAR_BOTTOM = 1.5; ASP_SAFE = 2.0
-    DISP_BOTTOM = 1.0; DISP_WALL_TOP = -2.0
-    # Delays (s)
-    D_ASP = 0.5; D_DISP = 0.5
-
-
 
 def run(protocol: protocol_api.ProtocolContext):
     _require_auth(protocol)
@@ -90,10 +72,11 @@ def run(protocol: protocol_api.ProtocolContext):
     p1000.flow_rate.dispense = temp_flow
 
     p1000.pick_up_tip()
-    p1000.aspirate(200, plate_pcr["A1"].bottom(LC.ASP_SAFE))
-    protocol.delay(seconds=LC.D_ASP)
-    p1000.dispense(200, plate_pcr["A12"].bottom(LC.DISP_BOTTOM))
-    protocol.delay(seconds=LC.D_DISP)
+    p1000.aspirate(200, plate_pcr["A1"].bottom(2))
+    protocol.delay(seconds=0.5)
+    p1000.dispense(200, plate_pcr["A12"].bottom(1))
+    protocol.delay(seconds=0.5)
     p1000.drop_tip(waste_chute)
+
 
     protocol.comment("Run complete ✅")
