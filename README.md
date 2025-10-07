@@ -33,10 +33,7 @@ Opentrons-lucR/
 
 ## ⚙️ Installation
 
- 
-python -m venv .venv
-source .venv/bin/activate   # Linux/Mac
-.venv\Scripts\activate      # Windows (PowerShell)
+
 Install dependencies:
 
  
@@ -65,7 +62,7 @@ You will be prompted for a username and password before the simulation starts.
 
 4. Run on an Opentrons Flex
 
-MATCH the secret in mon_protocole.py 
+MATCH the secret code in mon_protocole.py 
 Edit run_on_flex.py to set your robot’s IP address, then run:
 
 python run_on_flex.py
@@ -73,8 +70,7 @@ python run_on_flex.py
 Requires Python 3.10+.
 
 Works with Opentrons Flex (and simulation mode for OT-2).
-
 Authentication is file-based (JSON) → simple demo purpose.
 
-⚠️ For production, integrate with a secure system (e.g., database, hashed passwords, signed tokens).
+
 
