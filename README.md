@@ -6,32 +6,16 @@
 This project provides a secure way to run and simulate **Opentrons protocols** (OT-2 and Flex) with **user authentication**.  
 It adds a simple user/password system before a protocol can be executed, ensuring compliance with quality standards.
 
----
 
-## 🚀 Features
-- 🔑 User authentication (username + password) before running a protocol.  
-- 🧪 Protocol simulation locally (with `opentrons.simulate`).  
-- 🤖 Protocol execution directly on an Opentrons **Flex** robot via its HTTP API.  
-- 👤 User management (add, remove, list users).  
-- 📄 Example secure protocol included (`mon_protocole.py`).  
+##  Features
+-  User authentication (username + password) before running a protocol.  
+-  Protocol simulation locally (with `opentrons.simulate`).  
+-  Protocol execution directly on an Opentrons **Flex** robot via its HTTP API.  
+-  User management (add, remove, list users).  
+-  Example secure protocol included (`mon_protocole.py`).  
 
----
 
-## 📂 Project Structure
-
-Opentrons-lucR/
- -- mon_protocole.py # Example secure protocol (requires authentication)
- -- secure_simulate.py # Simulation with authentication
- -- run_on_flex.py # Upload and run a protocol on the Flex robot
- -- auth_utils.py # Utilities to manage users (add/remove/list)
- -- add_user.py # Add new user
- -- remove_user.py # Remove existing user
- -- requirements.txt # Python dependencies
- -- README.md # Project documentation
-
----
-
-## ⚙️ Installation
+##  Installation
 
 
 Install dependencies:
@@ -66,11 +50,12 @@ MATCH the secret code in mon_protocole.py
 Edit run_on_flex.py to set your robot’s IP address, then run:
 
 python run_on_flex.py
-📌 Notes
+ Notes
 Requires Python 3.10+.
 
 Works with Opentrons Flex (and simulation mode for OT-2).
 Authentication is file-based (JSON) → simple demo purpose.
+
 
 
 
