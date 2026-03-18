@@ -1,0 +1,13 @@
+# Fichiers de sécurité
+private_key.pem
+public_key.pem
+auth_token.txt
+
+# Bases de données locales et historiques
+users.json
+audit.log
+run_*.json
+
+# Fichiers système Python
+__pycache__/
+*.pyc

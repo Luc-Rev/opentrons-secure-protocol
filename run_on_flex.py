@@ -6,13 +6,13 @@ from auth_utils import load_users, verify_user
 
 # ==== CONFIG ====
 ROBOT = os.environ.get("ROBOT", "http://XXX.XXX.XX.XXX:31950")  # set ROBOT env var or edit here
-PROTOCOL_PATH = "mon_protocole.py"
+PROTOCOL_PATH = os.environ.get("PROTOCOL_PATH", "mon_protocole.py")
 TOKEN_FILENAME = "auth_token.txt"
 AUDIT_LOG = "audit.log"
 
-# Must MATCH the secret in mon_protocole.py
 SECRET_KEY = b""
-TOKEN_TTL_SECONDS = 600
+
+TOKEN_TTL_SECONDS = 86400
 
 HEADERS = {
     "Opentrons-Version": "3",  # << REQUIRED by Flex HTTP API
@@ -36,11 +36,19 @@ def pretty_status(state: dict) -> str:
         return "unknown"
 
 if __name__ == "__main__":
-    # 0) Local login
-    user = input("User: ").strip()
-    pwd = getpass("Password: ")
+    # 0) Local login 
+    user = os.environ.get("OT_USER")
+    if not user:
+        user = input("User: ").strip()
+        
+    pwd = os.environ.get("OT_PWD")
+    if not pwd:
+        pwd = getpass("Password: ")
+        
     users = load_users()
     if not verify_user(users, user, pwd):
+        # On ajoute un print pour que l'interface puisse lire l'erreur
+        print("⛔ Auth failed: Mot de passe incorrect ou utilisateur introuvable.") 
         raise SystemExit("⛔ Auth failed")
 
     # (optional) quick health check
@@ -104,6 +112,8 @@ if __name__ == "__main__":
     # 6) Save command log (optional)
     try:
         log = requests.get(f"{ROBOT}/runs/{run_id}/commands", headers=HEADERS, timeout=30).json()
+
+        log["_metadata_traceability"] = { "operator": user,"execution_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
         with open(f"run_{run_id}.json", "w", encoding="utf-8") as f:
             json.dump(log, f, indent=2)
         print(f"📝 Saved command log to run_{run_id}.json")

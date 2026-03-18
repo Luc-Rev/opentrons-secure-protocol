@@ -10,10 +10,10 @@ metadata = {
 }
 requirements = {"robotType": "Flex", "apiLevel": "2.24"}
 
-# ---- Security config (shared secret must match the launcher) ----
-SECRET_KEY = b""  # <-- mets une vraie clé secrète (32+ bytes)
+# La variable charge automatiquement le contenu du fichier
+SECRET_KEY = b""
 TOKEN_FILENAME = "auth_token.txt"
-TOKEN_TTL_SECONDS = 600  # token valid for 10 minutes
+TOKEN_TTL_SECONDS = 86400  #
 # ----------------------------------------------------------------
 
 def _check_env_auth():
@@ -56,27 +56,24 @@ def run(protocol: protocol_api.ProtocolContext):
     hs = protocol.load_module("heaterShakerModuleV1", "C1")      # sans adaptateur
     tempmod = protocol.load_module("temperatureModuleV2", "D1")  # non utilisé
     mag = protocol.load_module("magneticBlockV1", "D2")
-
-    tip50    = protocol.load_labware("opentrons_flex_96_filtertiprack_50ul", "B3")
-    tip1k_A3 = protocol.load_labware("opentrons_flex_96_filtertiprack_1000ul", "A3")
+    tip50 = protocol.load_labware('opentrons_flex_96_tiprack_50ul', 'C2')
+    tip1k_A3 = protocol.load_labware("opentrons_flex_96_filtertiprack_1000ul", "C3")
     p50      = protocol.load_instrument("flex_8channel_50", "left",  tip_racks=[tip50])
     p1000    = protocol.load_instrument("flex_8channel_1000", "right", tip_racks=[tip1k_A3])
 
     waste_chute = protocol.load_waste_chute()
 
-    plate_pcr = protocol.load_labware(
-        "opentrons_96_wellplate_200ul_pcr_full_skirt", "C3",label="PCR reagents (Col1=Beads, Col2=ProtK)")
+    # --- 3. AJOUT DE LA PLAQUE EN A2 ---
+    # On charge une plaque PCR standard 96 puits
+    plaque = protocol.load_labware("opentrons_96_wellplate_200ul_pcr_full_skirt", "A2")
+
+    # --- 4. DÉPLACEMENT AVEC LE GRIPPER ---
+    protocol.comment("🤖 Début du déplacement : Prise de la plaque en A2...")
     
-    temp_flow = 30  # µL/s (set what you need)
-    p1000.flow_rate.aspirate = temp_flow
-    p1000.flow_rate.dispense = temp_flow
-
-    p1000.pick_up_tip()
-    p1000.aspirate(200, plate_pcr["A1"].bottom(2))
-    protocol.delay(seconds=0.5)
-    p1000.dispense(200, plate_pcr["A12"].bottom(1))
-    protocol.delay(seconds=0.5)
-    p1000.drop_tip(waste_chute)
-
+    protocol.move_labware(
+        labware=plaque,
+        new_location="A3",
+        use_gripper=True
+    )
 
     protocol.comment("Run complete ✅")
